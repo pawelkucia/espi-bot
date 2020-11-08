@@ -62,10 +62,8 @@ def scrap(lastHash):
 def getLastHash():
     hash = ""
     hashFile = "lastHash.txt"
-    workingDirectory = os.path.dirname(os.path.realpath("__file__"))
-    print(workingDirectory)
     try:
-        hashdocument = open(workingDirectory + "/" + hashFile, "r")
+        hashdocument = open(hashFile, "r")
     except IOError:
         print("Invalid file.")
         sys.exit()
@@ -76,9 +74,8 @@ def getLastHash():
 
 def saveLastHash(hash):
     hashFile = "lastHash.txt"
-    workingDirectory = os.path.dirname(os.path.realpath("__file__"))
     try:
-        hashdocument = open(workingDirectory + "/" + hashFile, "w")
+        hashdocument = open(hashFile, "w")
     except IOError:
         print("Invalid file.")
         sys.exit()
