@@ -62,7 +62,7 @@ def scrap(lastHash):
 def getLastHash():
     hash = ""
     hashFile = "lastHash.txt"
-    workingDirectory = os.getcwd()
+    workingDirectory = os.path.dirname(os.path.realpath("__file__"))
     print(workingDirectory)
     try:
         hashdocument = open(workingDirectory + "/" + hashFile, "r")
@@ -76,7 +76,7 @@ def getLastHash():
 
 def saveLastHash(hash):
     hashFile = "lastHash.txt"
-    workingDirectory = os.getcwd()
+    workingDirectory = os.path.dirname(os.path.realpath("__file__"))
     try:
         hashdocument = open(workingDirectory + "/" + hashFile, "w")
     except IOError:
@@ -96,6 +96,6 @@ if len(tweets) > 0:
     for tweet in tweets:
         print(tweet)
         print('--------------------------------------------------')
-        # sendTweet(tweet)
+        sendTweet(tweet)
 else:
     print('No tweets to post.')
