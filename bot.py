@@ -3,6 +3,7 @@ import tweepy
 import yaml
 import hashlib
 import sys
+import os
 from bs4 import BeautifulSoup
 
 def prepareHashtag(string): 
@@ -61,8 +62,10 @@ def scrap(lastHash):
 def getLastHash():
     hash = ""
     hashFile = "lastHash.txt"
+    workingDirectory = os.getcwd()
+    print(workingDirectory)
     try:
-        hashdocument = open(hashFile, "r")
+        hashdocument = open(workingDirectory + "/" + hashFile, "r")
     except IOError:
         print("Invalid file.")
         sys.exit()
@@ -73,8 +76,9 @@ def getLastHash():
 
 def saveLastHash(hash):
     hashFile = "lastHash.txt"
+    workingDirectory = os.getcwd()
     try:
-        hashdocument = open(hashFile, "w")
+        hashdocument = open(workingDirectory + "/" + hashFile, "w")
     except IOError:
         print("Invalid file.")
         sys.exit()
@@ -92,6 +96,6 @@ if len(tweets) > 0:
     for tweet in tweets:
         print(tweet)
         print('--------------------------------------------------')
-        sendTweet(tweet)
+        # sendTweet(tweet)
 else:
     print('No tweets to post.')
