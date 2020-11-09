@@ -22,7 +22,7 @@ def sendTweet(tweet):
         api = tweepy.API(auth)
         api.update_status(tweet)
     except tweepy.TweepError as e:
-        print(e.message[0])
+        print(e)
     else:
         print('Post OK')
 
