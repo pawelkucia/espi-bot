@@ -15,10 +15,16 @@ def sendTweet(tweet):
     consumer_secret = env['TWITTER']['API_KEY_SECRET']
     access_token = env['TWITTER']['ACCESS_TOKEN']
     access_token_secret = env['TWITTER']['ACCESS_TOKEN_SECRET']
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
-    api.update_status(tweet)
+
+    try:
+        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        auth.set_access_token(access_token, access_token_secret)
+        api = tweepy.API(auth)
+        api.update_status(tweet)
+    except tweepy.TweepError as e:
+        print(e.message[0])
+    else:
+        print('Post OK')
 
 def scrap(lastHash):
     tweets = []
@@ -55,6 +61,7 @@ def scrap(lastHash):
     
     if (newHash != ""):
         saveLastHash(newHash)
+        print('LastHash saved: ' + newHash)
     
     tweets.reverse()
     return tweets
@@ -92,7 +99,8 @@ tweets = scrap(lastHash)
 if len(tweets) > 0:
     for tweet in tweets:
         print(tweet)
-        print('--------------------------------------------------')
         sendTweet(tweet)
+        print('--------------------------------------------------')
+        
 else:
     print('No tweets to post.')
