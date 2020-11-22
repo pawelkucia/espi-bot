@@ -29,6 +29,7 @@ def sendTweet(tweet):
 def scrap(lastHash):
     tweets = []
     newHash = ""
+    tweetsDone = False
     pageUrl = "http://biznes.pap.pl/pl/reports/espi/all,0,0,0,1"
     page = requests.get(pageUrl)
     soup = BeautifulSoup(page.content, "html.parser")
@@ -38,26 +39,29 @@ def scrap(lastHash):
     today = table.find(class_='dni').text.strip()
 
     for row in rows:
-        link = row.find("a", class_="th")
-        title = link.text.strip().replace("???", "")
-        url = link.get("href")
-        cols = row.find_all("td")
-        time = cols[0].text.strip()
-        number = cols[1].text.strip()
-        company = cols[2].text.strip()
+        if not tweetsDone:
+            link = row.find("a", class_="th")
+            title = link.text.strip().replace("???", "")
+            url = link.get("href")
+            cols = row.find_all("td")
+            time = cols[0].text.strip()
+            number = cols[1].text.strip()
+            company = cols[2].text.strip()
 
-        hashtags = '#espi #gpw #NewConnect #giełda #inwestowanie ' + prepareHashtag(company)
+            hashtags = '#espi #gpw #NewConnect #giełda #inwestowanie ' + prepareHashtag(company)
 
-        tweet =  company + ' (' + number + '): ' + title + ' ' + url + ' [' + today + ' ' + time + '] ' + hashtags
-        
-        hash = hashlib.md5(tweet.encode('utf-8')).hexdigest()
-        # print(hash)
-        # print(lastHash)
-        # print(newHash)
-        if (hash != lastHash):
-            tweets.append(tweet)
-            if (newHash == ""):
+            tweet =  company + ' (' + number + '): ' + title + ' ' + url + ' [' + today + ' ' + time + '] ' + hashtags
+            
+            hash = hashlib.md5(tweet.encode('utf-8')).hexdigest()
+            # print(hash)
+            # print(lastHash)
+            # print(newHash)
+            if (hash != lastHash):
+                tweets.append(tweet)
+                #if (newHash == ""):
                 newHash = hash
+            else:
+                tweetsDone = True
     
     if (newHash != ""):
         saveLastHash(newHash)
@@ -97,10 +101,11 @@ lastHash = getLastHash()
 tweets = scrap(lastHash)
 
 if len(tweets) > 0:
-    for tweet in tweets:
-        print(tweet)
-        sendTweet(tweet)
-        print('--------------------------------------------------')
+    tweet = tweets[0]
+    #for tweet in tweets:
+    print(tweet)
+    sendTweet(tweet)
+    print('--------------------------------------------------')
         
 else:
     print('No tweets to post.')
