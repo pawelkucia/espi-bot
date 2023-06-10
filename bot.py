@@ -7,7 +7,7 @@ import os
 from bs4 import BeautifulSoup
 
 def prepareHashtag(string): 
-    return "#" + string.replace(" ", "").replace(".", "")
+    return "#" + string.replace(" ", "").replace(".", "").replace("&", "")
 
 def sendTweet(tweet):
     env = yaml.safe_load(open("env.yaml", "r"))
@@ -17,11 +17,18 @@ def sendTweet(tweet):
     access_token_secret = env['TWITTER']['ACCESS_TOKEN_SECRET']
 
     try:
-        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
-        api = tweepy.API(auth)
-        api.update_status(tweet)
-    except tweepy.TweepError as e:
+        # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        # auth.set_access_token(access_token, access_token_secret)
+        # api = tweepy.API(auth)
+        # api.update_status(tweet)
+
+        client = tweepy.Client(consumer_key=consumer_key, 
+                                consumer_secret=consumer_secret,
+                                access_token=access_token, 
+                                access_token_secret=access_token_secret)
+        client.get_me()
+        client.create_tweet(text=tweet)
+    except tweepy.errors.TweepyException as e:
         print(e)
     else:
         print('Post OK')
@@ -48,7 +55,7 @@ def scrap(lastHash):
             number = cols[1].text.strip()
             company = cols[2].text.strip()
 
-            hashtags = '#espi #gpw #NewConnect #giełda #inwestowanie ' + prepareHashtag(company)
+            hashtags = '#espi #gpw #giełda #inwestowanie ' + prepareHashtag(company)
 
             tweet =  company + ' (' + number + '): ' + title + ' ' + url + ' [' + today + ' ' + time + '] ' + hashtags
             
@@ -104,6 +111,7 @@ if len(tweets) > 0:
     tweet = tweets[0]
     #for tweet in tweets:
     print(tweet)
+    # print(len(tweet))
     sendTweet(tweet)
     print('--------------------------------------------------')
         
