@@ -55,6 +55,9 @@ def scrap(lastHash):
             number = cols[1].text.strip()
             company = cols[2].text.strip()
 
+            if (len(title) > 100):
+                title = title[:100] + '...'
+
             hashtags = '#espi #gpw #giełda #inwestowanie ' + prepareHashtag(company)
 
             tweet =  company + ' (' + number + '): ' + title + ' ' + url + ' [' + today + ' ' + time + '] ' + hashtags
