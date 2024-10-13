@@ -7,7 +7,8 @@ import os
 from bs4 import BeautifulSoup
 
 def prepareHashtag(string): 
-    return "#" + string.replace(" ", "").replace(".", "").replace("&", "")
+    company_name = string.split('-')[0].strip()
+    return "#" + company_name.replace(" ", "").replace(".", "").replace("&", "")
 
 def sendTweet(tweet):
     env = yaml.safe_load(open("env.yaml", "r"))
@@ -37,30 +38,29 @@ def scrap(lastHash):
     tweets = []
     newHash = ""
     tweetsDone = False
-    pageUrl = "http://biznes.pap.pl/pl/reports/espi/all,0,0,0,1"
+    #pageUrl = "http://biznes.pap.pl/pl/reports/espi/all,0,0,0,1"
+    pageUrl = "https://espiebi.pap.pl"
     page = requests.get(pageUrl)
     soup = BeautifulSoup(page.content, "html.parser")
-    table = soup.find(class_="espi")
-    rows = table.find_all(class_="inf")
-
-    today = table.find(class_='dni').text.strip()
+    table = soup.find(class_="newsList")
+    rows = table.find_all(class_="news")
 
     for row in rows:
         if not tweetsDone:
-            link = row.find("a", class_="th")
-            title = link.text.strip().replace("???", "")
+            link = row.find("a", class_="link")
+            title = link.text.strip()
             url = link.get("href")
-            cols = row.find_all("td")
-            time = cols[0].text.strip()
-            number = cols[1].text.strip()
-            company = cols[2].text.strip()
-
+            cols = row.find_all("div")
+            newsType = cols[0].text.strip()
+            time = cols[1].text.strip()
+            number = cols[2].text.strip()
+            
             if (len(title) > 100):
                 title = title[:100] + '...'
 
-            hashtags = '#espi #gpw #giełda #inwestowanie ' + prepareHashtag(company)
+            hashtags = '#' + newsType + ' #gpw #giełda #inwestowanie ' + prepareHashtag(title)
 
-            tweet =  company + ' (' + number + '): ' + title + ' ' + url + ' [' + today + ' ' + time + '] ' + hashtags
+            tweet =  newsType + ' ' + time + ' (' + number + '): ' + title + ' ' + pageUrl + url + ' ' + hashtags
             
             hash = hashlib.md5(tweet.encode('utf-8')).hexdigest()
             # print(hash)
