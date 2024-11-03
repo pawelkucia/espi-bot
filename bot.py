@@ -6,8 +6,7 @@ import sys
 import os
 from bs4 import BeautifulSoup
 
-def prepareHashtag(string): 
-    company_name = string.split(' - ')[0].strip()
+def prepareHashtag(company_name): 
     return "#" + company_name.replace(" ", "").replace(".", "").replace("&", "")
 
 def sendTweet(tweet):
@@ -49,6 +48,9 @@ def scrap(lastHash):
         if not tweetsDone:
             link = row.find("a", class_="link")
             title = link.text.strip()
+            title_splitted = title.split(' - ')
+            company_name = title_splitted[0].strip()
+            content = title_splitted[1].strip()
             url = link.get("href")
             cols = row.find_all("div")
             newsType = cols[0].text.strip()
@@ -57,12 +59,12 @@ def scrap(lastHash):
             number = number.replace("Raport Bieżący nr ", "").replace("Raport bieżący nr ", "")
             number = number.replace(" ", "")
             
-            if (len(title) > 200):
-                title = title[:200] + '...'
+            if (len(content) > 200):
+                content = content[:200] + '...'
 
-            hashtags = '#' + newsType + ' #gpw #giełda #inwestowanie ' + prepareHashtag(title)
+            hashtags = '#' + newsType + ' #gpw #giełda #inwestowanie ' + prepareHashtag(company_name)
 
-            tweet =  newsType + ' ' + time + ' (' + number + '): ' + title + ' ' + pageUrl + url + ' ' + hashtags
+            tweet =  company_name + ' (' + newsType + ' ' + time  + number + '): ' + content + ' ' + pageUrl + url + ' ' + hashtags
             
             hash = hashlib.md5(tweet.encode('utf-8')).hexdigest()
             # print(hash)
@@ -117,7 +119,7 @@ if len(tweets) > 0:
     #for tweet in tweets:
     print(tweet)
     # print(len(tweet))
-    # sendTweet(tweet)
+    sendTweet(tweet)
     print('--------------------------------------------------')
         
 else:
