@@ -64,7 +64,7 @@ def scrap(lastHash):
 
             hashtags = '#' + newsType + ' #gpw #giełda #inwestowanie ' + prepareHashtag(company_name)
 
-            tweet =  company_name + ' (' + newsType + ' ' + time  + number + '): ' + content + ' ' + pageUrl + url + ' ' + hashtags
+            tweet =  company_name + ' (' + newsType + ' ' + time + ' ' + number + '): ' + content + ' ' + pageUrl + url + ' ' + hashtags
             
             hash = hashlib.md5(tweet.encode('utf-8')).hexdigest()
             # print(hash)
