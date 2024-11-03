@@ -7,7 +7,7 @@ import os
 from bs4 import BeautifulSoup
 
 def prepareHashtag(string): 
-    company_name = string.split('-')[0].strip()
+    company_name = string.split(' - ')[0].strip()
     return "#" + company_name.replace(" ", "").replace(".", "").replace("&", "")
 
 def sendTweet(tweet):
@@ -54,9 +54,11 @@ def scrap(lastHash):
             newsType = cols[0].text.strip()
             time = cols[1].text.strip()
             number = cols[2].text.strip()
+            number = number.replace("Raport Bieżący nr ", "").replace("Raport bieżący nr ", "")
+            number = number.replace(" ", "")
             
-            if (len(title) > 100):
-                title = title[:100] + '...'
+            if (len(title) > 200):
+                title = title[:200] + '...'
 
             hashtags = '#' + newsType + ' #gpw #giełda #inwestowanie ' + prepareHashtag(title)
 
@@ -115,7 +117,7 @@ if len(tweets) > 0:
     #for tweet in tweets:
     print(tweet)
     # print(len(tweet))
-    sendTweet(tweet)
+    # sendTweet(tweet)
     print('--------------------------------------------------')
         
 else:
